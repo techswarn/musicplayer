@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div id="settings" class="hidden">
+        <input type="text" name="password" id="key" placeholder="key">
+        <input type="text" name="username" id="api-url" placeholder="api url">
+        <button type="submit" id="settings-save">Save</button>
+    </div>
+    <div id="container">
+        <div id="musicList" class="albumCover"></div>
+        <input id="musicTimeSlider" type="range" max="0" value="0">
+        <div id="nowPlaying">Select Song</div>
+        <div id="musicPlayer">
+            <audio id="musicAudio"></audio>
+            <div class="controls-left">
+                <button id="settingsBtn" class="icon-s icon-settings pointer"></button>
+            </div>
+            <div class="controls">
+                <button id="musicPlayPrev" class="icon icon-prev pointer"></button>
+                <button id="musicPlay" class="icon icon-play pointer"></button>
+                <button id="musicPlayNext" class="icon icon-next pointer"></button>
+            </div>
+            <div class="controls-right">
+                <div id="musicTimePlayed">0:00</div>
+                <div id="musicDuration">0:00</div>
+            </div>
+        </div>
+    </div>
+    <script src="./vnode.js"></script>
+    <script src="./MusicPlayer.js"></script>
+    <script src="./script.js"></script>
+</body>
+</html>
