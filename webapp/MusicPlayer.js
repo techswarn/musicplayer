@@ -139,12 +139,16 @@ class MusicPlayer{
 
         if(this.audioEl.src != ""){
             this.audioEl.play()
+            if(this.playButtonEl.classList.contains("musicplayer-icon-play")){
+                this.playButtonEl.classList.replace("musicplayer-icon-play", "musicplayer-icon-pause")
+            }
         }
     }
 
     pause(){
         this.audioEl.pause()
         this.isPlaying === false
+        this.playButtonEl.classList.replace("musicplayer-icon-pause", "musicplayer-icon-play")
     }
 
     setAlbumCover(url){

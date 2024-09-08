@@ -66,7 +66,7 @@ async function main(){
             })
 
             // Play whole album
-            const playPlaylistBtn = $('button', {classList: "icon-s icon-play pointer"})
+            const playPlaylistBtn = $('button', {classList: "icon-s musicplayer-icon-play pointer"})
             playPlaylistBtn.dataset.folder = folderName
 
             playPlaylistBtn.addEventListener('click', async (e) => {
@@ -102,6 +102,8 @@ async function main(){
         const apiUrl = document.getElementById('api-url').value
 
         if(key && apiUrl){
+            musicPlayer.setApiUrl(apiUrl)
+
             const musicFolder = await fetch(`${apiUrl}/music`, {
                 method: "GET",
                 headers: {
@@ -111,8 +113,6 @@ async function main(){
                 }
             })
 
-            musicPlayer.setApiUrl(apiUrl)
-
             const musicAlbums = await musicFolder.json()
         
             musicList.addAll(musicAlbums)
@@ -121,11 +121,14 @@ async function main(){
     
     getMusic()
 
-    const settingsBtn = document.getElementById('settings-save')
-    settingsBtn.addEventListener('click', getMusic)
-
-
     const settings = document.getElementById('settings')
+
+    const settingsSaveBtn = document.getElementById('settings-save')
+    settingsSaveBtn.addEventListener('click', () => {
+        getMusic()
+        settings.classList.add('hidden')
+    })
+
     document.getElementById('settingsBtn').addEventListener('click', () => {
         settings.classList.toggle('hidden')
     })

@@ -38,7 +38,7 @@ body{
     background-color: #fff;
     color: #eee;
     grid-template-areas: "controlsL controls controlsR";
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 15em 1fr;
     grid-template-rows: 1fr;
 }
 
@@ -64,6 +64,10 @@ body{
 #musicList .album .albumHeader{
     display: flex;
     justify-content: space-between;
+}
+
+#musicList .album .albumName{
+    width: 100%;
 }
 
 #musicList .albumSongs{
@@ -159,12 +163,12 @@ body{
     height: 24px;
 }
 
-.icon-play{
+.musicplayer-icon-play{
     background-image: url("icons/music/008-play button.png");
 }
 
-.icon-pause{
-    background-image: url("icons/music/071-pause button.png");
+.musicplayer-icon-pause{
+    background-image: url("icons/music/007-pause button.png");
 }
 
 .icon-prev{
