@@ -35,5 +35,6 @@ app.get('/song/:name', async (req,rep) => {
 })
 
 app.listen({
-    port: 8080
+    port: 8080,
+    host: '0.0.0.0'
 })
