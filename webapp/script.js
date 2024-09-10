@@ -114,8 +114,8 @@ async function main(){
         const apiKey = document.getElementById('api-key')
         const apiUrl = document.getElementById('api-url')
 
-        localStorage.setItem("api-key", apiKey)
-        localStorage.setItem("api-url", apiUrl)
+        localStorage.setItem("apikey", apiKey)
+        localStorage.setItem("apiurl", apiUrl)
 
         getMusic()
         settings.classList.add('hidden')
