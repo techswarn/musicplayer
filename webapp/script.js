@@ -14,6 +14,15 @@ async function main(){
         coverImage: '#musicList'
     })
 
+    const FETCH_CONFIG = {
+        method: "GET",
+        headers: {
+            'Authorization': `bearer ${localStorage.getItem('api-key')}`,
+            'Content-Type': 'application/json',
+            'origin': "*"
+        }
+    }
+
     const musicList = new VList("#musicList", {
         template: (folderName) => {
             // Song List inside Albums
@@ -43,16 +52,8 @@ async function main(){
 
                 if(!hasSongs){
                     const albumFolder = e.target.dataset.folder
-                    const apiKey = localStorage.getItem('apikey')
                     const apiUrl = localStorage.getItem('apiurl')
-                    const getSongs = await fetch(`${apiUrl}/album/${albumFolder}`, {
-                        method: "GET",
-                        headers: {
-                            'Authorization': `bearer ${apiKey}`,
-                            'Content-Type': 'application/json',
-                            'origin': "*"
-                        }
-                    })
+                    const getSongs = await fetch(`${apiUrl}/album/${albumFolder}`, FETCH_CONFIG)
                     const songNames = await getSongs.json()
 
                     const {cover, songs} = MusicPlayer.sortCoverAndSongs(songNames)
@@ -71,16 +72,8 @@ async function main(){
 
             playPlaylistBtn.addEventListener('click', async (e) => {
                 const albumFolder = e.target.dataset.folder
-                const apiKey = localStorage.getItem('apikey')
                 const apiUrl = localStorage.getItem('apiurl')
-                const getSongs = await fetch(`${apiUrl}/album/${albumFolder}`, {
-                    method: "GET",
-                    headers: {
-                        'Authorization': `bearer ${apiKey}`,
-                        'Content-Type': 'application/json',
-                        'origin': "*"
-                    }
-                })
+                const getSongs = await fetch(`${apiUrl}/album/${albumFolder}`, FETCH_CONFIG)
                 const songNames = await getSongs.json()
                 const songPaths = songNames.map(songPath => `/song/${albumFolder}/${songPath}`)
                 musicPlayer.loadPlaylist(songPaths)
@@ -104,14 +97,7 @@ async function main(){
         if(apiKey && apiUrl){
             musicPlayer.setApiUrl(apiUrl)
 
-            const musicFolder = await fetch(`${apiUrl}/music`, {
-                method: "GET",
-                headers: {
-                    'Authorization': `bearer ${apiKey}`,
-                    'Content-Type': 'application/json',
-                    'origin': "*"
-                }
-            })
+            const musicFolder = await fetch(`${apiUrl}/music`, FETCH_CONFIG)
 
             const musicAlbums = await musicFolder.json()
         
