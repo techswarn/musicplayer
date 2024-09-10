@@ -43,12 +43,12 @@ async function main(){
 
                 if(!hasSongs){
                     const albumFolder = e.target.dataset.folder
-                    const key = document.getElementById('key').value
-                    const apiUrl = document.getElementById('api-url').value
+                    const apiKey = localStorage.getItem('apikey')
+                    const apiUrl = localStorage.getItem('apiurl')
                     const getSongs = await fetch(`${apiUrl}/album/${albumFolder}`, {
                         method: "GET",
                         headers: {
-                            'Authorization': `bearer ${key}`,
+                            'Authorization': `bearer ${apiKey}`,
                             'Content-Type': 'application/json',
                             'origin': "*"
                         }
@@ -71,12 +71,12 @@ async function main(){
 
             playPlaylistBtn.addEventListener('click', async (e) => {
                 const albumFolder = e.target.dataset.folder
-                const key = document.getElementById('key').value
-                const apiUrl = document.getElementById('api-url').value
+                const apiKey = localStorage.getItem('apikey')
+                const apiUrl = localStorage.getItem('apiurl')
                 const getSongs = await fetch(`${apiUrl}/album/${albumFolder}`, {
                     method: "GET",
                     headers: {
-                        'Authorization': `bearer ${key}`,
+                        'Authorization': `bearer ${apiKey}`,
                         'Content-Type': 'application/json',
                         'origin': "*"
                     }
@@ -98,16 +98,16 @@ async function main(){
     })
 
     const getMusic = async () => {
-        const key = document.getElementById('key').value
-        const apiUrl = document.getElementById('api-url').value
+        const apiKey = localStorage.getItem('apikey')
+        const apiUrl = localStorage.getItem('apiurl')
 
-        if(key && apiUrl){
+        if(apiKey && apiUrl){
             musicPlayer.setApiUrl(apiUrl)
 
             const musicFolder = await fetch(`${apiUrl}/music`, {
                 method: "GET",
                 headers: {
-                    'Authorization': `bearer ${key}`,
+                    'Authorization': `bearer ${apiKey}`,
                     'Content-Type': 'application/json',
                     'origin': "*"
                 }
@@ -125,6 +125,12 @@ async function main(){
 
     const settingsSaveBtn = document.getElementById('settings-save')
     settingsSaveBtn.addEventListener('click', () => {
+        const apiKey = document.getElementById('api-key')
+        const apiUrl = document.getElementById('api-url')
+
+        localStorage.setItem("api-key", apiKey)
+        localStorage.setItem("api-url", apiUrl)
+
         getMusic()
         settings.classList.add('hidden')
     })
