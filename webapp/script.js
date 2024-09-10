@@ -111,8 +111,8 @@ async function main(){
 
     const settingsSaveBtn = document.getElementById('settings-save')
     settingsSaveBtn.addEventListener('click', () => {
-        const apiKey = document.getElementById('api-key')
-        const apiUrl = document.getElementById('api-url')
+        const apiKey = document.getElementById('api-key').value
+        const apiUrl = document.getElementById('api-url').value
 
         localStorage.setItem("apikey", apiKey)
         localStorage.setItem("apiurl", apiUrl)
