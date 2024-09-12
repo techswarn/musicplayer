@@ -17,7 +17,7 @@ async function main(){
     const FETCH_CONFIG = {
         method: "GET",
         headers: {
-            'Authorization': `bearer ${localStorage.getItem('api-key')}`,
+            Authorization: `Bearer ${localStorage.getItem('apikey')}`,
             'Content-Type': 'application/json',
             'origin': "*"
         }
@@ -100,6 +100,10 @@ async function main(){
             const musicFolder = await fetch(`${apiUrl}/music`, FETCH_CONFIG)
 
             const musicAlbums = await musicFolder.json()
+
+            if(musicAlbums.error){
+                console.log(musicAlbums)
+            }
         
             musicList.addAll(musicAlbums)
         }

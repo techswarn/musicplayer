@@ -7,7 +7,7 @@ const fastifyStatic = require('@fastify/static')
 const app = require('fastify')()
 
 if(process.env?.KEY){
-    app.register(require('@fastify/bearer-auth'), {keys: [`bearer ${process.env.KEY}`], addHook: false})
+    app.register(require('@fastify/bearer-auth'), {keys: [process.env.KEY]})
 }
 
 app.register(require('@fastify/cors'), { "origin": "*" })
@@ -36,5 +36,5 @@ app.get('/song/:name', async (req,rep) => {
 
 app.listen({
     port: 8080,
-    host: '0.0.0.0'
+    host: process.env.HOST || '127.0.0.1'
 })
