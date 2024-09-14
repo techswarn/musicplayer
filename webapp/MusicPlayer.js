@@ -200,4 +200,18 @@ class MusicPlayer{
         const {artist, album, song} = MusicPlayer.extractArtistAlbumSongname(fullSongPath)
         this.playingSongTextEl.textContent = `${artist} - ${song}`
     }
+
+    highlightSongElement(element){
+        const selector = "musicplayer-highlight-song"
+
+        Array.from(document.getElementsByClassName(selector)).forEach(e => e.classList.remove(selector))
+        element.classList.add(selector)
+    }
+
+    highlightAlbumElement(element){
+        const selector = "musicplayer-highlight-album"
+
+        Array.from(document.getElementsByClassName(selector)).forEach(e => e.classList.remove(selector))
+        element.classList.add(selector)
+    }
 }

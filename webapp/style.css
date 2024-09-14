@@ -110,6 +110,10 @@ body{
     color: #000;
 }
 
+#musicPlayer .song{
+    padding: 0.25em 1em;
+}
+
 #musicPlay{
     width: 5em;
     height: 5em;
@@ -163,14 +167,6 @@ body{
     height: 24px;
 }
 
-.musicplayer-icon-play{
-    background-image: url("icons/music/008-play button.png");
-}
-
-.musicplayer-icon-pause{
-    background-image: url("icons/music/007-pause button.png");
-}
-
 .icon-prev{
     background-image: url("icons/music/003-previous.png");
 }
@@ -182,4 +178,18 @@ body{
 
 .icon-settings{
     background-image: url("icons/settings.png");
+}
+
+/* musicplayer style */
+
+.musicplayer-icon-play{
+    background-image: url("icons/music/008-play button.png");
+}
+
+.musicplayer-icon-pause{
+    background-image: url("icons/music/007-pause button.png");
+}
+
+.musicplayer-highlight-song, .musicplayer-highlight-album{
+    color: #afa;
 }

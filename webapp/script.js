@@ -38,6 +38,7 @@ async function main(){
                     songNameEl.addEventListener('click', async (e) => {
                         const audioPath = `/song/${e.target.dataset.filepath}`
                         musicPlayer.loadPlaylist([audioPath])
+                        musicPlayer.highlightSongElement(e.target)
                     })
 
                     return songNameEl
@@ -79,6 +80,7 @@ async function main(){
                 const songNames = await getSongs.json()
                 const songPaths = songNames.map(songPath => `/song/${albumFolder}/${songPath}`)
                 musicPlayer.loadPlaylist(songPaths)
+                musicPlayer.highlightAlbumElement(e.target.parentElement.querySelector('.albumName'))
             })
 
             // Return Album to Music List
