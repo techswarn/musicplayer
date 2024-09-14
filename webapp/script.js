@@ -1,17 +1,19 @@
 async function main(){
     const musicPlayer = new MusicPlayer({
-        audio: '#musicAudio',
-        songDuration: '#musicDuration',
-        timeSlider: '#musicTimeSlider',
-        timePlayed: '#musicTimePlayed',
-        volumeSlider: '#musicVolume',
-        volumeText: '#musicVolumeText',
-        playButton: '#musicPlay',
-        muteButton: '#musicMute',
-        playNextSongButton: '#musicPlayNext',
-        playPrevSongButton: '#musicPlayPrev',
-        playingSongText: '#nowPlaying',
-        coverImage: '#musicList'
+        elements: {
+            audio: '#musicAudio',
+            songDuration: '#musicDuration',
+            timeSlider: '#musicTimeSlider',
+            timePlayed: '#musicTimePlayed',
+            volumeSlider: '#musicVolume',
+            volumeText: '#musicVolumeText',
+            playButton: '#musicPlay',
+            muteButton: '#musicMute',
+            playNextSongButton: '#musicPlayNext',
+            playPrevSongButton: '#musicPlayPrev',
+            playingSongText: '#nowPlaying',
+            coverImage: '#musicList'
+        }
     })
 
     const FETCH_CONFIG = {

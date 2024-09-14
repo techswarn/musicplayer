@@ -8,19 +8,21 @@ class MusicPlayer{
         this.playlist = {}
         this.playlistPlayingIndex = 0
         
-        if(config){
-            this.audioEl = document.querySelector(config.audio)
-            this.songDurationEl = config.songDuration ? document.querySelector(config.songDuration) : config.songDuration
-            this.songSliderEl = config.timeSlider ? document.querySelector(config.timeSlider) : config.timeSlider
-            this.timePlayedEl = config.timePlayed ? document.querySelector(config.timePlayed) : config.timePlayed
-            this.playButtonEl = config.playButton ? document.querySelector(config.playButton) : config.playButton
-            this.volumeSliderEl = config.volumeSlider ? document.querySelector(config.volumeSlider) : config.volumeSlider
-            this.volumeTextEl = config.volumeText ? document.querySelector(config.volumeText) : config.volumeText
-            this.muteButtonEl = config.muteButton ? document.querySelector(config.muteButton) : config.muteButton
-            this.coverImageEl = config.coverImage ? document.querySelector(config.coverImage) : config.coverImage
-            this.playNextEl = config.playNextSongButton ? document.querySelector(config.playNextSongButton) : config.playNextSongButton
-            this.playPrevEl = config.playPrevSongButton ? document.querySelector(config.playPrevSongButton) : config.playPrevSongButton
-            this.playingSongTextEl = config.playingSongText ? document.querySelector(config.playingSongText) : config.playingSongText
+        if(config.elements){
+            const {audio, songDuration, timeSlider, timePlayed, playButton, volumeSlider, volumeText, muteButton, coverImage, playNextSongButton, playPrevSongButton, playingSongText} = config.elements
+
+            this.audioEl = document.querySelector(audio)
+            this.songDurationEl = songDuration ? document.querySelector(songDuration) : songDuration
+            this.songSliderEl = timeSlider ? document.querySelector(timeSlider) : timeSlider
+            this.timePlayedEl = timePlayed ? document.querySelector(timePlayed) : timePlayed
+            this.playButtonEl = playButton ? document.querySelector(playButton) : playButton
+            this.volumeSliderEl = volumeSlider ? document.querySelector(volumeSlider) : volumeSlider
+            this.volumeTextEl = volumeText ? document.querySelector(volumeText) : volumeText
+            this.muteButtonEl = muteButton ? document.querySelector(muteButton) : muteButton
+            this.coverImageEl = coverImage ? document.querySelector(coverImage) : coverImage
+            this.playNextEl = playNextSongButton ? document.querySelector(playNextSongButton) : playNextSongButton
+            this.playPrevEl = playPrevSongButton ? document.querySelector(playPrevSongButton) : playPrevSongButton
+            this.playingSongTextEl = playingSongText ? document.querySelector(playingSongText) : playingSongText
 
             this.muteButtonEl?.addEventListener('click', () => {
                 if(this.audioEl.muted === false){
