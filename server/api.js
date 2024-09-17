@@ -6,11 +6,11 @@ const fastifyStatic = require('@fastify/static')
 
 const app = require('fastify')()
 
+app.register(require('@fastify/cors'), { "origin": "*" })
+
 if(process.env?.KEY){
     app.register(require('@fastify/bearer-auth'), {keys: [process.env.KEY]})
 }
-
-app.register(require('@fastify/cors'), { "origin": "*" })
 
 app.register(fastifyStatic, {
     root: process.env.MUSICFOLDER,

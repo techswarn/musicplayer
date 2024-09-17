@@ -21,7 +21,7 @@ async function main(){
         headers: {
             Authorization: `Bearer ${localStorage.getItem('apikey')}`,
             'Content-Type': 'application/json',
-            'origin': "*"
+            'Access-Control-Allow-Origin': "*"
         }
     }
 
