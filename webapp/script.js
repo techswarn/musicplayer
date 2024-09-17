@@ -13,7 +13,8 @@ async function main(){
             playPrevSongButton: '#musicPlayPrev',
             playingSongText: '#nowPlaying',
             coverImage: '#musicList'
-        }
+        },
+        authToken: localStorage.getItem('apikey')
     })
 
     const FETCH_CONFIG = {
@@ -23,6 +24,29 @@ async function main(){
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': "*"
         }
+    }
+
+    async function authImage(path, token){
+        const apiKey = localStorage.getItem('apikey')
+        const apiUrl = localStorage.getItem('apiurl')
+
+        return await fetch(`${apiUrl}/${path}`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${apiKey}`,
+                'Content-Type': 'image/jpeg',
+                'Access-Control-Allow-Origin': "*"
+            }
+        }).then(res => {
+            if(!res.ok){
+                throw new Error(`AuthImage HTTP ERROR: ${res.status}`)
+            }
+
+            let buffer = res.arrayBuffer()
+            let uint = new Uint8Array(buffer)
+            let raw = String.fromCharCode.apply(null, uint)
+            return `data:image;base64,${btoa(raw)}`
+        })
     }
 
     const musicList = new VList("#musicList", {
@@ -94,44 +118,33 @@ async function main(){
         }
     })
 
-    const getMusic = async () => {
-        const apiKey = localStorage.getItem('apikey')
-        const apiUrl = localStorage.getItem('apiurl')
-
-        if(apiKey && apiUrl){
-            musicPlayer.setApiUrl(apiUrl)
-
-            const musicFolder = await fetch(`${apiUrl}/music`, FETCH_CONFIG)
-
-            const musicAlbums = await musicFolder.json()
-
-            if(musicAlbums.error){
-                console.log(musicAlbums)
-            }
-        
-            musicList.addAll(musicAlbums)
-        }
-    }
-    
-    getMusic()
-
     const settings = document.getElementById('settings')
 
-    const settingsSaveBtn = document.getElementById('settings-save')
-    settingsSaveBtn.addEventListener('click', () => {
+    document.getElementById('settings-save').addEventListener('click', async () => {
         const apiKey = document.getElementById('api-key').value
         const apiUrl = document.getElementById('api-url').value
 
-        localStorage.setItem("apikey", apiKey)
-        localStorage.setItem("apiurl", apiUrl)
+        const server = {
+            url: apiUrl,
+            token: apiKey,
+            musicListRoute: '/music'
+        }
 
-        getMusic()
+        musicPlayer.addServer(server)
+
+        await musicPlayer.getAlbumsFromServer(apiUrl)
+
         settings.classList.add('hidden')
     })
 
     document.getElementById('settingsBtn').addEventListener('click', () => {
         settings.classList.toggle('hidden')
     })
+
+    await musicPlayer.getAlbumsFromAllServers()
+
+    const albums = musicPlayer.getAlbums()
+    musicList.addAll(albums)
 }
 
 main()

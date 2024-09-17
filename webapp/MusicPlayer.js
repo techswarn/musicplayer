@@ -1,12 +1,18 @@
 class MusicPlayer{
     constructor(config){
-        this.apiUrl = ""
 
         this.timePlayed = 0
         this.songDuration = 0
 
         this.playlist = {}
         this.playlistPlayingIndex = 0
+
+        this.serverList = {}
+
+        const serverList = localStorage.getItem('serverList')
+        if(serverList){
+            this.serverList = JSON.parse(serverList)
+        }
         
         if(config.elements){
             const {audio, songDuration, timeSlider, timePlayed, playButton, volumeSlider, volumeText, muteButton, coverImage, playNextSongButton, playPrevSongButton, playingSongText} = config.elements
@@ -126,6 +132,10 @@ class MusicPlayer{
         return { cover, songs }
     }
 
+    static join(){
+        return Array.from(arguments).map(s => s[0] === "/" ? s.slice(1) : s).join('/')
+    }
+
     calcTime(seconds){
         const min = Math.floor(seconds / 60)
         const sec = Math.floor(seconds % 60)
@@ -153,15 +163,8 @@ class MusicPlayer{
         this.playButtonEl.classList.replace("musicplayer-icon-pause", "musicplayer-icon-play")
     }
 
-    setAlbumCover(url){
-        if(this.playlist.cover){
-            this.coverImageEl.style.backgroundImage = `url("${this.apiUrl + this.playlist.cover}")`
-        }else if(this.apiUrl && url){
-            this.coverImageEl.style.backgroundImage = `url("${this.apiUrl + url}")`
-        }else{
-            this.coverImageEl.style.backgroundImage = ""
-            this.coverImageEl.style.backgroundColor = "#151515"
-        }
+    setAlbumCoverBase64(code){
+        this.coverImageEl.style.backgroundImage = `url("${code}")`
     }
 
     loadPlaylist(paths){
@@ -213,5 +216,59 @@ class MusicPlayer{
 
         Array.from(document.getElementsByClassName(selector)).forEach(e => e.classList.remove(selector))
         element.classList.add(selector)
+    }
+
+    saveToLocalStorage(){
+        const serverListJson = JSON.stringify(this.serverList)
+        localStorage.setItem('serverList', serverListJson)
+    }
+
+    addServer(config){
+        const {url, token, musicListRoute} = config
+
+        this.serverList[url] = {
+            url,
+            token,
+            musicListRoute: MusicPlayer.join(url, musicListRoute)
+        }
+
+        this.saveToLocalStorage()
+    }
+
+    async getAlbumsFromServer(apiUrl){
+        const {token, musicListRoute} = this.serverList[apiUrl]
+
+        const fetchConfig = {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': "*"
+            }
+        }
+
+        const albums = await fetch(musicListRoute, fetchConfig).then(async (res) => await res.json())
+
+        this.serverList[apiUrl].albums = albums
+
+        return albums
+    }
+
+    async getAlbumsFromAllServers(){
+        const servers = Object.values(this.serverList)
+        const albumsFromServers = await Promise.all(servers.map(server => this.getAlbumsFromServer(server.url)))
+
+        for(let i = 0; i < servers.length; i++){
+            const {url} = servers[i]
+            const albums = albumsFromServers[i]
+            this.serverList[url].albums = albums
+        }
+    }
+
+    getAlbums(){
+        const servers = Object.values(this.serverList)
+        const albums = servers.map(server => server.albums)
+
+        return [].concat(...albums)
     }
 }
