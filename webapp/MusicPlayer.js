@@ -170,13 +170,9 @@ class MusicPlayer{
     loadPlaylist(paths){
         this.playlist = MusicPlayer.sortCoverAndSongs(paths)
 
-        this.setAlbumCover()
+        // this.setAlbumCoverBase64()
 
         this.play(this.playlist.songs[0])
-    }
-
-    setApiUrl(url){
-        this.apiUrl = url
     }
 
     playNextSong(){
@@ -224,19 +220,14 @@ class MusicPlayer{
     }
 
     addServer(config){
-        const {url, token, musicListRoute} = config
-
-        this.serverList[url] = {
-            url,
-            token,
-            musicListRoute: MusicPlayer.join(url, musicListRoute)
-        }
+        // {url, token, musicListRoute, albumRoute}
+        this.serverList[config.url] = config
 
         this.saveToLocalStorage()
     }
 
-    async getAlbumsFromServer(apiUrl){
-        const {token, musicListRoute} = this.serverList[apiUrl]
+    async getAlbumsFromServer(url){
+        const {token, musicListRoute} = this.serverList[url]
 
         const fetchConfig = {
             method: "GET",
@@ -247,9 +238,9 @@ class MusicPlayer{
             }
         }
 
-        const albums = await fetch(musicListRoute, fetchConfig).then(async (res) => await res.json())
+        const albums = await fetch(MusicPlayer.join(url, musicListRoute), fetchConfig).then(async (res) => await res.json())
 
-        this.serverList[apiUrl].albums = albums
+        this.serverList[url].albums = albums
 
         return albums
     }
@@ -263,12 +254,31 @@ class MusicPlayer{
             const albums = albumsFromServers[i]
             this.serverList[url].albums = albums
         }
+
+        this.saveToLocalStorage()
     }
 
     getAlbums(){
-        const servers = Object.values(this.serverList)
-        const albums = servers.map(server => server.albums)
+        return Object.values(this.serverList).reduce((acc, v) => {
+            const {url, albums, albumRoute} = v
+            return [...acc, ...albums.map(album => ({url, album, albumRoute: MusicPlayer.join(albumRoute, album)}))]
+        }, [])
+    }
 
-        return [].concat(...albums)
+    async getSongsFromAlbum(url, album){
+        const {token, albumRoute} = this.serverList[url]
+
+        const fetchConfig = {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': "*"
+            }
+        }
+
+        const albums = await fetch(MusicPlayer.join(url, albumRoute, album), fetchConfig).then(async (res) => await res.json())
+
+        return albums
     }
 }

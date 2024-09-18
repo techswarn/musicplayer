@@ -17,40 +17,29 @@ async function main(){
         authToken: localStorage.getItem('apikey')
     })
 
-    const FETCH_CONFIG = {
-        method: "GET",
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem('apikey')}`,
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': "*"
-        }
-    }
+    async function authImage(server, path){
+        const token = musicPlayer.serverList[server].token
 
-    async function authImage(path, token){
-        const apiKey = localStorage.getItem('apikey')
-        const apiUrl = localStorage.getItem('apiurl')
-
-        return await fetch(`${apiUrl}/${path}`, {
+        return await fetch(path, {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${apiKey}`,
-                'Content-Type': 'image/jpeg',
+                Authorization: `Bearer ${token}`,
                 'Access-Control-Allow-Origin': "*"
             }
-        }).then(res => {
+        }).then(async (res) => {
             if(!res.ok){
                 throw new Error(`AuthImage HTTP ERROR: ${res.status}`)
             }
 
-            let buffer = res.arrayBuffer()
-            let uint = new Uint8Array(buffer)
-            let raw = String.fromCharCode.apply(null, uint)
-            return `data:image;base64,${btoa(raw)}`
+            let blob = await res.blob()
+            let blobObj = URL.createObjectURL(blob)
+            console.log(`${blob.size / 1000}kb`)
+            return blobObj
         })
     }
 
     const musicList = new VList("#musicList", {
-        template: (folderName) => {
+        template: ({url, album}) => {
             // Song List inside Albums
             const albumSongsEl = $("div", {className: "albumSongs hidden"})
             const songsList = new VList(albumSongsEl, {
@@ -70,23 +59,28 @@ async function main(){
             })
 
             // Album List
-            const albumNameTxt = MusicPlayer.normalizeName(folderName)
+            const albumNameTxt = MusicPlayer.normalizeName(album)
             const albumNameEl = $("div", {className: "albumName"}, albumNameTxt)
-            albumNameEl.dataset.folder = folderName
+            albumNameEl.dataset.server = url
+            albumNameEl.dataset.album = album
 
             albumNameEl.addEventListener('click', async (e) => {
                 const hasSongs = albumSongsEl.querySelector('.song') //e.target.children.length always returns 0
 
                 if(!hasSongs){
-                    const albumFolder = e.target.dataset.folder
-                    const apiUrl = localStorage.getItem('apiurl')
-                    const getSongs = await fetch(`${apiUrl}/album/${albumFolder}`, FETCH_CONFIG)
-                    const songNames = await getSongs.json()
+                    const {server, album} = e.target.dataset
+                    const songNames = await musicPlayer.getSongsFromAlbum(server, album)
 
                     const {cover, songs} = MusicPlayer.sortCoverAndSongs(songNames)
 
+                    const img = await authImage(server, MusicPlayer.join(server, "/song", album, cover))
+
+                    img.onload = () => URL.revokeObjectURL(img.src)
+
+                    musicPlayer.setAlbumCoverBase64(img)
+
                     songs.forEach(songName => {
-                        songsList.add(`${albumFolder}/${songName}`)
+                        songsList.add(`${album}/${songName}`)
                     })
                 }
 
@@ -95,10 +89,10 @@ async function main(){
 
             // Play whole album
             const playPlaylistBtn = $('button', {classList: "icon-s musicplayer-icon-play pointer"})
-            playPlaylistBtn.dataset.folder = folderName
+            playPlaylistBtn.dataset.album = album
 
             playPlaylistBtn.addEventListener('click', async (e) => {
-                const albumFolder = e.target.dataset.folder
+                const albumFolder = e.target.dataset.album
                 const apiUrl = localStorage.getItem('apiurl')
                 const getSongs = await fetch(`${apiUrl}/album/${albumFolder}`, FETCH_CONFIG)
                 const songNames = await getSongs.json()
@@ -127,7 +121,8 @@ async function main(){
         const server = {
             url: apiUrl,
             token: apiKey,
-            musicListRoute: '/music'
+            musicListRoute: '/music',
+            albumRoute: '/album'
         }
 
         musicPlayer.addServer(server)
@@ -144,6 +139,7 @@ async function main(){
     await musicPlayer.getAlbumsFromAllServers()
 
     const albums = musicPlayer.getAlbums()
+
     musicList.addAll(albums)
 }
 
